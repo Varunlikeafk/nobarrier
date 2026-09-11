@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Diff - NO"B"ARRIER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Link to your separate CSS file -->
+    <link rel="stylesheet" href="app.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#1c1815',
+                            card: '#2a221b',
+                            accent: '#b44b14',
+                            accentLight: '#d96a29',
+                            yellow: '#fcd34d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased transition-colors duration-300">
+
+    <!-- Navigation Header -->
+    <nav class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center backdrop-blur-md sticky top-0 z-50 transition-colors duration-300" style="background-color: var(--nav-bg);">
+        <div class="flex items-center gap-2 font-serif font-bold text-xl cursor-pointer">
+            <span class="text-brand-accent grid grid-cols-2 gap-0.5 w-4 h-4">
+                <span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span>
+                <span class="w-1.5 h-1.5 border border-brand-accent rounded-full"></span>
+                <span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span>
+                <span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span>
+            </span>
+            Zero Diff
+        </div>
+        
+        <div class="hidden md:flex gap-8 text-sm font-medium opacity-85">
+            <a href="#" onclick="openModal('signup'); return false;" class="hover:text-brand-accent transition-colors cursor-pointer">Translation AI</a>
+            <a href="#" class="hover:text-brand-accent transition-colors">Document OCR</a>
+            <!-- Smooth scroll trigger to Efficiency section -->
+            <a href="#efficiency-section" class="hover:text-brand-accent transition-colors cursor-pointer">Efficiency</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Dark Mode Toggle Button -->
+            <button id="theme-toggle" class="p-2.5 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all flex items-center justify-center text-sm" title="Toggle Dark Mode">
+                🌙
+            </button>
+
+            <!-- Client Button: Coming Soon (Not for public yet) -->
+            <div class="relative group">
+                <button disabled class="bg-gray-200 text-gray-500 dark:bg-gray-800 dark:text-gray-400 px-4 py-2 rounded-full text-xs font-semibold cursor-not-allowed border border-dashed border-gray-400 dark:border-gray-700">
+                    Client: Coming Soon 🔒
+                </button>
+                <div class="absolute right-0 top-full mt-2 hidden group-hover:block w-48 bg-black text-white text-[10px] rounded-xl p-2.5 shadow-xl text-center z-50 border border-white/10">
+                    Not for public yet. Private legal framework.
+                </div>
+            </div>
+
+            <!-- Lawyer Portal Button (Redirects to Sign Up / Sign In Modal) -->
+            <button onclick="openModal('signup')" class="bg-gradient-to-br from-brand-accent to-[#7a320c] text-white px-5 py-2 rounded-full text-xs font-semibold hover:shadow-lg transition-all cursor-pointer hover-lift">
+                Lawyer Access ⚖️
+            </button>
+        </div>
+    </nav>
+
+    <!-- AUTHENTICATION MODAL (SIGN UP / SIGN IN) -->
+    <div id="auth-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="modal-content bg-[#1c1815] text-white border border-white/10 rounded-[2rem] p-8 md:p-10 w-full max-w-md shadow-2xl relative">
+            
+            <button onclick="closeModal()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-sm font-bold transition-colors">
+                ✕
+            </button>
+
+            <div class="text-center mb-6">
+                <span id="modal-tag" class="text-brand-accent text-xs font-bold tracking-widest uppercase">LAWYER SECURE ACCESS</span>
+                <h3 id="modal-title" class="text-2xl font-serif font-bold mt-1">Sign Up Now</h3>
+                <p id="modal-subtitle" class="text-xs text-gray-400 mt-1">Create your attorney account to unlock Zero Diff protocol.</p>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Username</label>
+                    <input type="text" id="username" required placeholder="e.g., varun_pant" class="w-full bg-[#2a221b] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-accent transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••••••" class="w-full bg-[#2a221b] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-accent transition-colors">
+                </div>
+
+                <button type="submit" id="modal-submit-btn" class="w-full bg-gradient-to-br from-brand-accent to-[#7a320c] text-white py-3.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all hover-lift mt-2">
+                    Create Account
+                </button>
+
+                <p id="success-msg" class="text-center text-xs text-green-400 hidden mt-2"></p>
+                <p id="error-msg" class="text-center text-xs text-red-400 hidden mt-2">✕ Incorrect password or username. Please check your credentials.</p>
+            </form>
+
+            <div class="text-center mt-6 pt-4 border-t border-white/10 text-xs text-gray-400">
+                <span id="toggle-text">Already have an account?</span>
+                <button onclick="toggleAuthMode()" id="toggle-link" class="text-brand-yellow font-semibold ml-1 hover:underline">Sign In</button>
+            </div>
+
+            <p class="text-center text-[10px] text-gray-500 mt-4 italic">Lawyers only — restricted public access</p>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="max-w-7xl mx-auto px-6 pt-16 pb-24 grid md:grid-cols-2 gap-12 items-center">
+        <div class="animate-on-scroll">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-200 bg-yellow-50 dark:bg-yellow-950/30 dark:border-yellow-900/50 text-[10px] font-bold tracking-widest text-gray-700 dark:text-gray-300 mb-8">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                NEXT-GEN LEGAL PROTOCOL
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-serif font-bold leading-[1.1] mb-6">
+                NO<span class="diff-badge">B</span>ARRIER<br>
+                <span class="text-brand-accent italic font-medium">Jurisprudence.</span>
+            </h1>
+            
+            <p class="opacity-70 leading-relaxed max-w-md mb-10">
+                Transcend language barriers in legal proceedings. Our specialized AI delivers flawless hand-to-hand translation and complex document management, bound by the aesthetics of tradition.
+            </p>
+            
+            <div class="flex flex-wrap gap-4 items-center">
+                <button onclick="openModal('signup')" class="bg-gradient-to-br from-brand-accent to-[#7a320c] text-white px-8 py-3.5 rounded-full font-medium shadow-lg hover:shadow-xl transition-all hover-lift cursor-pointer">
+                    Initiate Workflow
+                </button>
+                
+                <div class="bg-brand-yellow text-gray-900 px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-3 border border-yellow-400 hover:scale-105 transition-transform">
+                    <span class="text-xs uppercase tracking-wider">⚡ Lawyer Access</span>
+                    <div class="flex items-center gap-2 border-l border-gray-900/20 pl-3">
+                        <button onclick="openModal('signup')" class="text-xs hover:underline uppercase tracking-wider font-extrabold text-black cursor-pointer">Sign Up Now</button>
+                        <span class="opacity-40">|</span>
+                        <button onclick="openModal('signin')" class="text-xs hover:underline uppercase tracking-wider font-extrabold text-black cursor-pointer">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulated Book Graphic with Language Ticker -->
+        <div class="animate-on-scroll delay-200 flex justify-end">
+            <div class="relative w-full max-w-[450px] aspect-[4/5] bg-[#facc15] rounded-xl shadow-2xl overflow-hidden p-10 flex flex-col justify-between floating">
+                <div class="relative z-10 drop-shadow-xl h-full flex flex-col justify-between" style="background: linear-gradient(to right, #eab308, #facc15 5%, #facc15); box-shadow: -15px 0 30px rgba(0,0,0,0.1) inset;">
+                    <div class="p-8">
+                        <h2 class="text-[#1e3a8a] text-3xl font-sans font-bold tracking-wider mb-2">ZERO DIFF</h2>
+                        <p class="text-[8px] text-gray-800 uppercase tracking-wider font-semibold w-1/2">Advanced Legal Translation Protocol</p>
+                    </div>
+                    
+                    <div class="absolute top-1/3 left-1/4 w-32 h-32 bg-white/80 rotate-12 shadow-sm" style="clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); backdrop-filter: blur(4px);"></div>
+                    
+                    <div class="p-8 text-right self-end mt-auto">
+                        <h3 class="text-white text-3xl font-sans font-bold leading-tight drop-shadow-md">
+                            TRANSLATE<br>YOUR<br><span id="changing-word" class="fade-text underline decoration-2">WORK</span>
+                        </h3>
+                        <p class="text-[#1e3a8a] text-xs font-bold mt-2">Instant Multi-Language<br>AI Processing Engine</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LIVE HAND-TO-HAND TRANSLATION SECTION -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="bg-[#1c1815] rounded-[2.5rem] p-10 md:p-16 text-white animate-on-scroll shadow-2xl border border-white/5 grid lg:grid-cols-2 gap-12 items-center">
+            
+            <div>
+                <span class="text-brand-accent text-xs font-bold tracking-widest uppercase">REAL-TIME COMMUNICATION</span>
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-2 mb-2">
+                    Live Hand-to-Hand <br>
+                    <span class="text-brand-accent italic font-medium">Translation</span>
+                </h2>
+                
+                <p class="text-gray-400 text-sm leading-relaxed mb-8">
+                    Break language barriers instantly with our live translation feature. Click the switch button on the terminal to dynamically animate and cycle through regional languages.
+                </p>
+
+                <div class="space-y-4 mb-8">
+                    <div class="p-4 rounded-2xl bg-[#241e1a] border border-white/5 flex items-center justify-between hover:border-brand-accent transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-lg">🎤</div>
+                            <div>
+                                <h4 class="text-sm font-semibold">Voice Recognition</h4>
+                                <p class="text-xs text-gray-400">Advanced speech-to-text with legal terminology support</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-green-400 font-bold bg-green-950/40 px-2.5 py-1 rounded-full border border-green-800/50">Live</span>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#241e1a] border border-white/5 flex items-center justify-between hover:border-brand-accent transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white text-lg">📹</div>
+                            <div>
+                                <h4 class="text-sm font-semibold">Video Conferencing</h4>
+                                <p class="text-xs text-gray-400">Integrated with Zoom, Teams, and Google Meet</p>
+                            </div>
+                        </div>
+                        <span class="text-gray-400">→</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-4 items-center">
+                    <button onclick="openModal('signup')" class="bg-gradient-to-br from-brand-accent to-[#7a320c] text-white px-8 py-3.5 rounded-full font-medium shadow-lg hover:shadow-xl transition-all hover-lift cursor-pointer">
+                        Try Live Translation
+                    </button>
+                    <a href="#" class="text-brand-accentLight font-semibold text-sm hover:underline flex items-center gap-1">
+                        ⓘ Learn More
+                    </a>
+                </div>
+            </div>
+
+            <!-- Terminal Preview -->
+            <div class="bg-[#241e1a] border border-white/10 rounded-3xl p-6 shadow-2xl relative">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500 recording-dot"></span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-red-400">Recording</span>
+                    </div>
+                    <span class="text-xs font-mono text-gray-400">00:03:47</span>
+                </div>
+
+                <div class="bg-[#1c1815] border border-white/5 rounded-2xl p-4 mb-4 relative">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-600 text-[10px] font-bold flex items-center justify-center">EN</span>
+                        <div class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></div>
+                    </div>
+                    <p class="text-xs text-gray-300 italic">"The defendant's counsel has submitted a motion to dismiss based on lack of jurisdiction."</p>
+                    <div class="w-full bg-gray-700 h-1 rounded-full mt-3 overflow-hidden">
+                        <div class="bg-blue-500 h-full w-3/4"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-2 my-3 text-brand-accent text-xs font-medium">
+                    <span class="w-2 h-2 rounded-full bg-brand-accent animate-bounce"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-accent animate-bounce" style="animation-delay: 0.2s;"></span>
+                    <span class="w-2 h-2 rounded-full bg-brand-accent animate-bounce" style="animation-delay: 0.4s;"></span>
+                    <span class="tracking-widest uppercase text-[10px] text-gray-400 ml-1">AI Translating...</span>
+                </div>
+
+                <div class="bg-[#1c1815] border border-brand-accent/30 rounded-2xl p-4 mb-6 relative">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="lang-badge" class="w-6 h-6 rounded-full bg-green-600 text-[10px] font-bold flex items-center justify-center text-white">HI</span>
+                        <span id="lang-name-label" class="text-[10px] text-brand-yellow font-bold uppercase tracking-wider">Hindi (हिंदी)</span>
+                    </div>
+                    
+                    <div class="overflow-hidden min-h-[40px] flex items-center">
+                        <p id="translated-output" class="text-xs text-white font-medium fade-slide">"प्रतिवादी के वकील ने क्षेत्राधिकार की कमी के आधार पर खारिज करने का प्रस्ताव प्रस्तुत किया है।"</p>
+                    </div>
+
+                    <div class="w-full bg-gray-700 h-1 rounded-full mt-3 overflow-hidden">
+                        <div class="bg-green-500 h-full w-full"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-white/10 px-2">
+                    <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs hover:bg-white/20 transition-colors">⏸</button>
+                    <button class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/40 hover:scale-105 transition-transform">⏹</button>
+                    
+                    <button id="switch-lang-btn" class="w-10 h-10 rounded-full bg-brand-accent flex items-center justify-center text-white shadow-md hover:bg-brand-accentLight hover:rotate-180 transition-all duration-300" title="Switch Language">
+                        ⇄
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- EFFICIENCY PERFORMANCE SECTION -->
+    <section id="efficiency-section" class="max-w-7xl mx-auto px-6 py-20 scroll-mt-24">
+        <div class="bg-brand-dark rounded-[2.5rem] p-12 md:p-20 grid md:grid-cols-2 gap-16 items-center text-white animate-on-scroll shadow-2xl">
+            <div>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">
+                    Unprecedented <br>
+                    <span class="text-brand-accent italic font-medium">Efficiency</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed mb-8">
+                    Traditional legal translation and management is a bottleneck. Our AI processing achieves 100x the throughput of manual workflows, without compromising the strict accuracy required by international law.
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center gap-3 text-sm text-gray-300">
+                        <div class="w-5 h-5 rounded-full bg-brand-accent/20 flex items-center justify-center text-brand-accent">✓</div>
+                        Real-time cross-border contract analysis
+                    </li>
+                    <li class="flex items-center gap-3 text-sm text-gray-300">
+                        <div class="w-5 h-5 rounded-full bg-brand-accent/20 flex items-center justify-center text-brand-accent">✓</div>
+                        Automated formatting retention
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-[#241e1a] rounded-2xl p-8 border border-white/5 animate-on-scroll delay-200">
+                <div class="flex justify-between items-end border-b border-white/10 pb-4 mb-16">
+                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Throughput Volume (Pages/HR)</span>
+                    <span class="text-brand-accent font-serif text-2xl font-bold">100X</span>
+                </div>
+                
+                <div class="flex justify-around items-end h-32 pb-4">
+                    <div class="flex flex-col items-center gap-4 group">
+                        <div class="w-24 h-10 bg-gray-600 rounded-md flex items-center justify-center text-xs font-bold transition-all group-hover:h-12">3 pgs/hr</div>
+                        <span class="text-[10px] text-center text-gray-400 w-24 leading-tight">Human Translator Speed</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center gap-4 group">
+                        <div class="w-28 h-24 bg-gradient-to-t from-brand-accent to-brand-accentLight rounded-md flex items-center justify-center text-sm font-bold glow-bar transition-all group-hover:h-28">300+ pgs/hr</div>
+                        <span class="text-[10px] text-center text-brand-accentLight w-24 leading-tight">AI-Powered Translation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOBARRIER MAIN LLM ARCHITECTURE (BLUE & YELLOW COLOR BOXES) -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="bg-white dark:bg-[#1c1815] border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-10 md:p-16 shadow-lg animate-on-scroll">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-brand-accent text-xs font-bold tracking-widest uppercase">CORE ENGINE ECOSYSTEM</span>
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-2 mb-4 text-gray-900 dark:text-white">NOBARRIER Main LLM Architecture</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">Powered by specialized proprietary modules built for absolute judicial accuracy.</p>
+            </div>
+
+            <!-- Main Root Container representing NOBARRIER LLM -->
+            <div class="bg-gradient-to-br from-gray-900 via-gray-950 to-black border-2 border-brand-accent/40 rounded-3xl p-8 md:p-12 shadow-2xl text-white relative overflow-hidden">
+                <div class="absolute -right-12 -bottom-12 text-white/[0.03] text-9xl font-serif font-bold pointer-events-none">LLM</div>
+                
+                <div class="flex items-center justify-between mb-8 pb-6 border-b border-white/10 flex-wrap gap-4">
+                    <div>
+                        <span class="text-xs text-brand-yellow font-bold uppercase tracking-widest bg-yellow-950/50 px-3 py-1 rounded-full border border-yellow-900/50">Core Master LLM</span>
+                        <h3 class="text-2xl md:text-3xl font-serif font-bold mt-2">NOBARRIER Framework Engine</h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-mono text-gray-400">Active Sub-Modules</span>
+                    </div>
+                </div>
+
+                <!-- Sub-Modules Grid in Blue (NyayaSetuAI for PDF) and Yellow (WeSpellAI for Speech-to-Text) -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    
+                    <!-- Blue Color Box: NyayaSetuAI (PDF & Legal Documents) -->
+                    <div class="bg-blue-950/40 border border-blue-500/30 rounded-2xl p-6 hover:border-blue-400 transition-all group">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-lg">📄</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-300 bg-blue-900/50 px-2.5 py-1 rounded-full border border-blue-700/50">PDF & Document Core</span>
+                        </div>
+                        <h4 class="text-xl font-serif font-bold text-blue-200 mb-2 group-hover:text-white transition-colors">NyayaSetuAI</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Specialized intelligence engine dedicated to heavy PDF parsing, legal dossier extraction, contract verification, and cross-border statute indexing.
+                        </p>
+                    </div>
+
+                    <!-- Yellow Color Box: WeSpellAI (Speech-to-Text & Dialects) -->
+                    <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-6 hover:border-amber-400 transition-all group">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-10 h-10 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold text-lg shadow-lg">🎙️</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-900/50 px-2.5 py-1 rounded-full border border-amber-700/50">Speech-to-Text Core</span>
+                        </div>
+                        <h4 class="text-xl font-serif font-bold text-amber-200 mb-2 group-hover:text-white transition-colors">WeSpellAI</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Real-time speech-to-text recognition and phonetic spelling alignment system built explicitly for multi-dialect legal interpretation and voice-to-text accuracy.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Extended Section: Supported Languages & Prediction Accuracy Block -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="grid md:grid-cols-2 gap-8">
+            
+            <div class="bg-white dark:bg-[#1c1815] border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-10 shadow-sm animate-on-scroll hover-lift flex flex-col justify-between">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 text-brand-accent text-xs font-bold mb-6">
+                        GLOBAL REACH
+                    </div>
+                    <h3 class="text-3xl font-serif font-bold mb-4 text-gray-900 dark:text-white">20+ Languages Supported</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
+                        Seamlessly translate across more than 20 global dialects and regional jurisdictions with context-aware legal terminology preservation.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">English</span>
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Hindi (हिंदी)</span>
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Tamil (தமிழ்)</span>
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Punjabi (ਪੰਜਾਬੀ)</span>
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Malayalam (മലയാളം)</span>
+                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Urdu (اردو)</span>
+                    <span class="px-3 py-1 bg-brand-accent/20 text-brand-accent px-3 py-1 rounded-full text-xs font-bold">+15 More</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-brand-accent to-[#7a320c] text-white rounded-[2.5rem] p-10 shadow-xl animate-on-scroll delay-200 hover-lift flex flex-col justify-between">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold mb-6">
+                        AI PREDICTION ENGINE
+                    </div>
+                    <h3 class="text-3xl font-serif font-bold mb-4 text-white">99%+ Prediction Accuracy</h3>
+                    <p class="text-white/90 text-sm leading-relaxed mb-6">
+                        Powered by neural context prediction models, our engine preemptively maps clause structures to secure unprecedented legal accuracy.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between bg-black/20 p-4 rounded-2xl backdrop-blur-sm">
+                    <span class="text-xs uppercase tracking-wider font-bold text-white">Confidence Score</span>
+                    <span class="font-serif text-3xl font-bold text-brand-yellow">99.4%</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- NEW SECTION: WHAT & HOW WE DO -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="bg-white dark:bg-[#1c1815] border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-10 md:p-16 shadow-lg animate-on-scroll">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-brand-accent text-xs font-bold tracking-widest uppercase">CORE ARCHITECTURE</span>
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-2 mb-4 text-gray-900 dark:text-white">What & How We Do</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">Understanding our mission and our advanced operational mechanism.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-10">
+                <!-- WHAT WE DO -->
+                <div class="bg-gray-50 dark:bg-[#241e1a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-accent/20 text-brand-accent flex items-center justify-center font-bold text-xl mb-6">🎯</div>
+                    <h3 class="text-2xl font-serif font-bold mb-4 text-gray-900 dark:text-white">What We Do</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
+                        We eliminate communication barriers in judicial and cross-border legal frameworks. Zero Diff provides real-time hand-to-hand translation, automated high-volume document OCR, and secure multi-party communication protocols.
+                    </p>
+                    <ul class="space-y-3 text-xs text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2">✓ Real-time multi-dialect interpretation (Hindi, Tamil, Punjabi, etc.)</li>
+                        <li class="flex items-center gap-2">✓ Automated formatting preservation for heavy dossiers</li>
+                        <li class="flex items-center gap-2">✓ Secure client portals and authenticated document management</li>
+                    </ul>
+                </div>
+
+                <!-- HOW WE DO -->
+                <div class="bg-gray-50 dark:bg-[#241e1a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-yellow/20 text-brand-yellow flex items-center justify-center font-bold text-xl mb-6">⚙️</div>
+                    <h3 class="text-2xl font-serif font-bold mb-4 text-gray-900 dark:text-white">How We Do It</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
+                        Powered by custom neural context prediction models and speech-to-text engines tailored specifically for legal vocabulary, our system maps clause structures instantly to deliver 99%+ accuracy at 100x speed.
+                    </p>
+                    <ul class="space-y-3 text-xs text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center gap-2">⚡ Advanced neural speech recognition with regional legal tuning</li>
+                        <li class="flex items-center gap-2">⚡ Instant dynamic term swapping and UI state transitions</li>
+                        <li class="flex items-center gap-2">⚡ Fully encrypted sessions with secure candidate credential logs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cultural Harmony & Justice Banner (Clean Image Background) -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="bg-white dark:bg-[#1c1815] border border-gray-200 dark:border-gray-800 rounded-[2.5rem] p-8 md:p-12 shadow-lg animate-on-scroll text-center">
+            <div class="max-w-2xl mx-auto mb-10">
+                <span class="text-brand-accent text-xs font-bold tracking-widest uppercase">UNITY & TRADITION</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mt-2 mb-4 text-gray-900 dark:text-white">Empowering Every Culture</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">Bridging diverse communities through accessible, transparent, and barrier-free legal technologies.</p>
+            </div>
+
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl max-w-4xl mx-auto aspect-[16/9] bg-gradient-to-br from-[#2a221b] via-[#1c1815] to-[#b44b14]/50 flex flex-col items-center justify-center p-8">
+                <!-- Embedded User Image -->
+                <div class="absolute inset-0 opacity-25 overflow-hidden">
+                    <img src="photo 1.jpeg" alt="Cultural Collage" class="w-full h-full object-cover filter brightness-75">
+                </div>
+                <div class="absolute inset-0 bg-black/40"></div>
+
+                <div class="relative z-10">
+                    <span class="text-brand-yellow text-xs font-bold tracking-widest uppercase mb-2 block">OUR CORE PROMISE</span>
+                    <h3 class="text-white text-3xl md:text-5xl font-serif font-bold tracking-wide drop-shadow-md">We do justice without barrier</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script Control with Console Logging for Username & Password -->
+    <script>
+        // Scroll Intersection Observer
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.animate-on-scroll').forEach((elem) => {
+                observer.observe(elem);
+            });
+        });
+
+        // Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const bodyElement = document.body;
+
+        themeToggleBtn.addEventListener('click', () => {
+            bodyElement.classList.toggle('dark-mode');
+            if (bodyElement.classList.contains('dark-mode')) {
+                themeToggleBtn.textContent = '☀️';
+            } else {
+                themeToggleBtn.textContent = '🌙';
+            }
+        });
+
+        // Auth Modal Control with Console Logging
+        let isSignUpMode = true;
+        const authModal = document.getElementById('auth-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSubtitle = document.getElementById('modal-subtitle');
+        const modalSubmitBtn = document.getElementById('modal-submit-btn');
+        const toggleText = document.getElementById('toggle-text');
+        const toggleLink = document.getElementById('toggle-link');
+
+        function openModal(mode) {
+            isSignUpMode = (mode === 'signup');
+            updateModalUI();
+            authModal.classList.add('active');
+        }
+
+        function closeModal() {
+            authModal.classList.remove('active');
+            document.getElementById('success-msg').classList.add('hidden');
+            document.getElementById('error-msg').classList.add('hidden');
+            document.getElementById('auth-form').reset();
+        }
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            updateModalUI();
+        }
+
+        function updateModalUI() {
+            document.getElementById('success-msg').classList.add('hidden');
+            document.getElementById('error-msg').classList.add('hidden');
+            if (isSignUpMode) {
+                modalTitle.textContent = "Sign Up Now (beta)";
+                modalSubtitle.textContent = "Create your attorney account to unlock Zero Diff protocol.";
+                modalSubmitBtn.textContent = "Create Account";
+                toggleText.textContent = "Already have an account?";
+                toggleLink.textContent = "Sign In";
+            } else {
+                modalTitle.textContent = "Sign In";
+                modalSubtitle.textContent = "Welcome back! Enter your lawyer credentials to continue.";
+                modalSubmitBtn.textContent = "Sign In";
+                toggleText.textContent = "Don't have an account?";
+                toggleLink.textContent = "Sign Up Now";
+            }
+        }
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeModal();
+            }
+        });
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const successMsg = document.getElementById('success-msg');
+            const errorMsg = document.getElementById('error-msg');
+            
+            // LOG THE CANDIDATE/USER CREDENTIALS TO THE CONSOLE
+            console.log("========================================");
+            console.log(isSignUpMode ? "📝 NEW LAWYER SIGN UP DETECTED:" : "🔐 LAWYER SIGN IN ATTEMPT:");
+            console.log("Username: ", username);
+            console.log("Password: ", password);
+            console.log("========================================");
+
+            // Mock backend verification for Sign In (Test Account: admin / password123)
+            if (!isSignUpMode) {
+                if (username !== "admin" || password !== "password123") {
+                    successMsg.classList.add('hidden');
+                    errorMsg.classList.remove('hidden');
+                    console.log("❌ Authentication Failed: Invalid credentials.");
+                    return;
+                }
+            } else {
+                if (password.length < 4) {
+                    successMsg.classList.add('hidden');
+                    errorMsg.textContent = "✕ Password must be at least 4 characters long.";
+                    errorMsg.classList.remove('hidden');
+                    console.log("❌ Sign Up Failed: Password too short.");
+                    return;
+                }
+            }
+
+            errorMsg.classList.add('hidden');
+            successMsg.classList.remove('hidden');
+
+            if (isSignUpMode) {
+                successMsg.textContent = `✓ Welcome, ${username}! Redirecting to dashboard...`;
+                console.log(`✅ Success: Lawyer '${username}' registered and redirected.`);
+            } else {
+                successMsg.textContent = `✓ Signed in successfully! Redirecting...`;
+                console.log(`✅ Success: Lawyer '${username}' signed in and redirected.`);
+            }
+
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 1200);
+        }
+
+        // Animated Switch Button Logic for Terminal Language Switching
+        const switchBtn = document.getElementById('switch-lang-btn');
+        const translatedOutput = document.getElementById('translated-output');
+        const langBadge = document.getElementById('lang-badge');
+        const langNameLabel = document.getElementById('lang-name-label');
+
+        const terminalLanguages = [
+            { code: "HI", name: "Hindi (हिंदी)", text: "प्रतिवादी के वकील ने क्षेत्राधिकार की कमी के आधार पर खारिज करने का प्रस्ताव प्रस्तुत किया है।" },
+            { code: "TA", name: "Tamil (தமிழ்)", text: "பிரதிவாதியின் வழக்கறிஞர் அதிகார வரம்பு இல்லாததன் அடிப்படையில் தள்ளுபடி செய்ய கோரிக்கை சமர்ப்பித்துள்ளார்." },
+            { code: "PA", name: "Punjabi (ਪੰਜਾਬੀ)", text: "مدعا علیہ دے کونسل نے دائرہ اختیار دی کمی دی بنیاد پر خارج کرن لئی درخواست جمع کرائی اے۔" },
+            { code: "ML", name: "Malayalam (മലയാളം)", text: "പ്രതിഭാഗം വക്കീൽ അധികാരപരിധിയില്ലെന്ന കാരണത്താൽ തള്ളിക്കളയാൻ ഹർജി സമർപ്പിച്ചു." },
+            { code: "UR", name: "Urdu (اردو)", text: "مدعا علیہ کے کونسل نے دائرہ اختیار کی کمی की بنیاد पर خارج करने की درخواست جمع करائی ہے۔" }
+        ];
+
+        let termLangIndex = 0;
+
+        switchBtn.addEventListener('click', () => {
+            translatedOutput.classList.add('animating');
+
+            setTimeout(() => {
+                termLangIndex = (termLangIndex + 1) % terminalLanguages.length;
+                const nextLang = terminalLanguages[termLangIndex];
+
+                translatedOutput.textContent = `"${nextLang.text}"`;
+                langBadge.textContent = nextLang.code;
+                langNameLabel.textContent = nextLang.name;
+
+                translatedOutput.classList.remove('animating');
+            }, 300);
+        });
+
+        // Capability Ticker for "WORK"
+        const workTranslations = [
+            "WORK",       // English
+            "हिंदी",      // Hindi
+            "தமிழ்",      // Tamil
+            "ਪੰਜਾਬੀ",     // Punjabi
+            "മലയാളം",    // Malayalam
+            "اردو",       // Urdu
+            "TRABAJO",    // Spanish
+            "TRAVAIL",    // French
+            "ARBEIT",     // German
+            "LAVORO",     // Italian
+            "TRABALHO",   // Portuguese
+            "РАБОТА",     // Russian
+            "工作",       // Chinese
+            "仕事"        // Japanese
+        ];
+
+        let currentIndex = 0;
+        const wordElement = document.getElementById('changing-word');
+
+        setInterval(() => {
+            wordElement.style.opacity = 0;
+            wordElement.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % workTranslations.length;
+                wordElement.textContent = workTranslations[currentIndex];
+                
+                wordElement.style.opacity = 1;
+                wordElement.style.transform = 'translateY(0px)';
+            }, 300);
+        }, 1000); // Changes every 1 second
+    </script>
+</body>
+</html>
